@@ -51,7 +51,7 @@ setup(
     test_suite='tests',
     tests_require=test_requirements,
     extras_require=extras_requirements,
-    url='https://github.com/tango-controls/tangods-pydatabase',
-    version='0.1.0',
+    url='http://github.com/ALBA-Synchrotron/pytango-db',
+    version='0.2.0',
     zip_safe=True
 )
