@@ -137,7 +137,7 @@ def update_timing_stats(dev, time_before, time_after, cmd_name):
 
 
 def get_plugin(name):
-    fullname = '%s.%s' % (db_access.__package__, name)
+    fullname = '%s.%s' % (db_access.__name__, name)
     return __import__(fullname, None, None, fullname)
 
 
@@ -1863,7 +1863,6 @@ def __run(db_name,argv):
         version = util.get_version_str()
         DbExportDevice(dbase, [dserver_name, dserver_ior, host, pid, version])
         DbExportDevice(dbase, [dbase_name, dbase_ior, host, pid, version])
-
     run((DataBase,), args=argv, util=util, post_init_callback=post_init_cb,
         green_mode=GreenMode.Gevent, verbose=True)
 

@@ -15,8 +15,9 @@ Executor = ThreadPoolExecutor(1)
 
 
 def get_create_db_statements():
+    this_dir = os.path.dirname(__file__)
     statements = []
-    with open("create_db_tables.sql") as f:
+    with open(os.path.join(this_dir, "create_db_tables.sql")) as f:
         lines = f.readlines()
     # strip comments
     lines = (line for line in lines if not line.startswith('#'))
@@ -26,7 +27,7 @@ def get_create_db_statements():
     lines = lines.replace("ENGINE=MyISAM", "")
     statements += lines.split(";")
 
-    with open("create_db.sql") as f:
+    with open(os.path.join(this_dir, "create_db.sql")) as f:
         lines = f.readlines()
     # strip comments
     lines = (line for line in lines if not line.lower().startswith('#'))
@@ -78,9 +79,11 @@ class SqlDatabase(object):
 
     DB_API_NAME = 'sqlite3'  # Default implementation
 
-    def __init__(self, db_name="tango_database.db", history_depth=10, fire_to_starter=True):
+    def __init__(self, name, db_name="tango_database.db", history_depth=10, fire_to_starter=True):
         self._db_api = None
         self._db_conn = None
+        self.name = name
+        self.dev_name = 'sys/database/' + name
         self.db_name = db_name
         self.history_depth = history_depth
         self.fire_to_starter = fire_to_starter
@@ -118,12 +121,16 @@ class SqlDatabase(object):
         return self.db_conn.cursor()
 
     def initialize(self):
-        self._info("Initializing database...")
+        self._info("Initializing database %r (%s)...", self.db_name, os.path.isfile(self.db_name))
         if not os.path.isfile(self.db_name):
             self.create_db()
         else:
             # trigger connection
-            self.db_conn
+            self._trigger_connection()
+
+    @use_cursor
+    def _trigger_connection(self):
+        return self.db_conn
 
     @use_cursor
     def create_db(self):
@@ -1117,7 +1124,7 @@ class SqlDatabase(object):
         result.append("")
          # get start time of database
         cursor.execute('SELECT started FROM device WHERE name =?',
-                       (self.db_name,))
+                       (self.dev_name,))
         row = cursor.fetchone()
         info_str = "Running since ..." + str(row[0])
         result.append(info_str)
@@ -1565,13 +1572,14 @@ class Sqlite3Database(SqlDatabase):
 
 
 def main():
-    db = Sqlite3Database()
+    db = Sqlite3Database('2')
     db.add_device("MyServer/my1", ("a/b/c", ("a", "b", "c")), "MyClass")
     db.close_db()
 
 
-def get_db(**keys):
-    return Executor.submit(Sqlite3Database).result()
+def get_db(personal_name='2'):
+#    return Executor.submit(Sqlite3Database).result()
+    return Sqlite3Database(personal_name)
 
 
 if __name__ == "__main__":
