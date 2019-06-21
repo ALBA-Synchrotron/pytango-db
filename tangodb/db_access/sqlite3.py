@@ -1062,11 +1062,11 @@ class SqlDatabase(object):
         result_str = []
         # Search first by server name and if nothing found by alias
         # Using OR takes much more time
-        cursor.execute('"SELECT exported,ior,version,pid,server,host,class FROM device WHERE name =?',
+        cursor.execute('SELECT exported,ior,version,pid,server,host,class FROM device WHERE name =?',
                        (dev_name,))
         rows = cursor.fetchall()
         if len(rows) == 0:
-            cursor.execute('"SELECT exported,ior,version,pid,server,host,class FROM device WHERE alias =?',
+            cursor.execute('SELECT exported,ior,version,pid,server,host,class FROM device WHERE alias =?',
                            (dev_name,))
             rows = cursor.fetchall()
             if len(rows) == 0:
@@ -1093,7 +1093,7 @@ class SqlDatabase(object):
         cursor = self.cursor
         result_long = []
         result_str = []
-        cursor.execute('"SELECT exported,ior,version,pid,host FROM event WHERE name =?',
+        cursor.execute('SELECT exported,ior,version,pid,host FROM event WHERE name =?',
                        (event_name,))
         rows = cursor.fetchall()
         if len(rows) == 0:
