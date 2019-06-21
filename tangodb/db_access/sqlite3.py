@@ -1035,7 +1035,7 @@ class SqlDatabase(object):
         return result
 
     @use_cursor
-    def get_server_list(self, wildcard):
+    def _get_server_list(self, wildcard):
         cursor = self.cursor
         cursor.execute('SELECT DISTINCT server FROM device WHERE server LIKE ? ORDER BY server',
                        (wildcard,))
@@ -1043,7 +1043,8 @@ class SqlDatabase(object):
 
     def get_server_list(self, wildcard):
         result = []
-        server_list = self.get_server_list(wildcard)
+        server_list = self._get_server_list(wildcard)
+        return server_list
         for server in server_list:
             found = 0
             server_name = server.split("/")[0]
