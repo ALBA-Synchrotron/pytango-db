@@ -973,7 +973,7 @@ class SqlDatabase(object):
             cursor.execute(stmt, (object_name,prop_name))
             rows = cursor.fetchall()
             n_rows = len(rows)
-            result.append(n_rows)
+            result.append(str(n_rows))
             if n_rows:
                 for row in rows:
                     result.append(row[1])
